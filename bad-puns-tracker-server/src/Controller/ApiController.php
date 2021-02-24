@@ -130,5 +130,47 @@ class ApiController
         return $request;
     }
 
+    /**
+     * Attempt authorization using jwt-verifier
+     * @return bool
+     */
+     public function isAuthorized(): bool
+     {
+         if (! isset( $_SERVER['HTTP_AUTHORIZATION'])) {
+             return false;
+            }
+
+            $authType = null;
+            $authData = null;
+
+            // Extract the auth type and the data from the Authorization header.
+            @list($authType, $authData) = explode(" ", $_SERVER['HTTP_AUTHORIZATION'], 2);
+
+            // If the Authorization Header is not a bearer type, return a 401.
+            if ($authType != 'Bearer') {
+                return false;
+            }
+
+            // Attempt authorization with the provided token
+            try {
+                // Setup the JWT Verifier
+                $jwtVerifier = (new \Okta\JwtVerifier\JwtVerifierBuilder())
+                                ->setAdaptor(new \Okta\JwtVerifier\Adaptors\SpomkyLabsJose())
+                                ->setAudience('api://default')
+                                ->setClientId('0oa90f29pDmMJMvpY5d6')
+                                ->setIssuer('https://dev-33095217.okta.com/oauth2/default')
+                                ->build();
+
+                // Verify the JWT from the Authorization Header.
+                $jwt = $jwtVerifier->verify($authData);
+            } catch (\Exception $e) {
+
+                // We encountered an error, return a 401.
+                return false;
+            }
+
+            return true;
+}
+
 }
 
