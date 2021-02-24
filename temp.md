@@ -1,0 +1,1 @@
+https://www.apps.uqam.ca/Application/AdmissionEnLigne/Traitements/DatesLimites/AfficherDatesLimites.aspx?adm_web_code_centre=U&adm_web_cycle=2
